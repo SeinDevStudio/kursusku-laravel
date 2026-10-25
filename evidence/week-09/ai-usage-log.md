@@ -1,6 +1,6 @@
 # AI Usage Log - Pertemuan 9 (Milestone Week-09)
 
-Dokumentasi konsultasi dan kolaborasi pengembangan antarmuka, layout Blade, integrasi Vite, serta fitur Ajax bersama AI Assistant.
+Dokumentasi konsultasi bersama AI Assistant.
 
 | Waktu     | Masalah / Tujuan                                                | Prompt Singkat                                                                                                  | Apa yang Diterima / Ditolak                                                                                                                                                                                                                              |
 | --------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
