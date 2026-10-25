@@ -1,7 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
 /* ==========================================================
- * KursusKu - Desain Visual Merah Hitam (Clean & Realistic)
+ * KursusKu - Desain Visual Merah Hitam (Modern & Responsive)
  * ========================================================== */
 
 :root {
@@ -25,11 +25,13 @@ body {
   flex-direction: column;
 }
 
-/* Navbar */
+/* ================= Navbar ================= */
 .navbar-kursusku {
   background-color: var(--color-black);
   border-bottom: 2px solid var(--color-red);
   padding: 0.85rem 0;
+  animation: navSlideDown 0.4s ease-out;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .navbar-kursusku .navbar-brand {
@@ -37,6 +39,11 @@ body {
   font-weight: 700;
   font-size: 1.35rem;
   letter-spacing: -0.01em;
+  transition: transform 0.2s ease;
+}
+
+.navbar-kursusku .navbar-brand:hover {
+  transform: scale(1.02);
 }
 
 .navbar-kursusku .navbar-brand span {
@@ -48,26 +55,48 @@ body {
   font-weight: 500;
   font-size: 0.95rem;
   padding: 0.5rem 1rem;
-  transition: color 0.15s ease;
+  position: relative;
+  transition: color 0.2s ease;
 }
 
-.navbar-kursusku .nav-link:hover,
-.navbar-kursusku .nav-link.active {
+.navbar-kursusku .nav-link:hover {
   color: var(--color-red) !important;
 }
 
+.navbar-kursusku .nav-link.active {
+  color: #FFFFFF !important;
+  font-weight: 600;
+}
+
+.navbar-kursusku .nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.15rem;
+  height: 2px;
+  background-color: var(--color-red);
+  border-radius: 2px;
+}
+
 .navbar-kursusku .navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
+  padding: 0.35rem 0.65rem;
+  transition: background-color 0.2s ease;
+}
+
+.navbar-kursusku .navbar-toggler:focus {
+  box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.4);
 }
 
 .navbar-kursusku .navbar-toggler-icon {
   filter: invert(1);
 }
 
-/* Primary Button */
+/* ================= Buttons ================= */
 .btn-red {
   background-color: var(--color-red);
-  color: var(--color-white);
+  color: var(--color-white) !important;
   border: 1px solid var(--color-red);
   font-weight: 600;
   font-size: 0.95rem;
@@ -75,36 +104,51 @@ body {
   border-radius: 4px;
   text-decoration: none;
   display: inline-block;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .btn-red:hover,
 .btn-red:focus {
   background-color: var(--color-red-dark);
   border-color: var(--color-red-dark);
-  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.28);
+}
+
+.btn-red:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(229, 9, 20, 0.2);
 }
 
 .btn-outline-red {
   background-color: transparent;
-  color: var(--color-red);
+  color: var(--color-red) !important;
   border: 1px solid var(--color-red);
   font-weight: 600;
-  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  padding: 0.65rem 1.4rem;
   border-radius: 4px;
-  transition: all 0.15s ease;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s ease;
 }
 
 .btn-outline-red:hover {
   background-color: var(--color-red);
-  color: var(--color-white);
+  color: var(--color-white) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.18);
 }
 
-/* Hero Section */
+.btn-outline-red:active {
+  transform: translateY(0);
+}
+
+/* ================= Hero Section ================= */
 .hero-section {
   background-color: var(--color-white);
   border-bottom: 1px solid var(--color-gray-border);
-  padding: 3.5rem 0;
+  padding: 4rem 0 3.5rem;
 }
 
 .hero-label {
@@ -113,23 +157,24 @@ body {
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   margin-bottom: 0.75rem;
 }
 
 .hero-title {
-  font-size: 2.35rem;
+  font-size: 2.5rem;
   font-weight: 800;
   color: var(--color-black);
   line-height: 1.25;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.02em;
 }
 
 .hero-desc {
   color: var(--color-gray-text);
-  font-size: 1.05rem;
-  margin-bottom: 1.75rem;
-  max-width: 480px;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
 }
 
 .hero-img-box {
@@ -138,25 +183,32 @@ body {
 
 .hero-img {
   width: 100%;
-  max-width: 460px;
+  max-width: 480px;
   height: auto;
   border-radius: 6px;
   border: 1px solid var(--color-gray-border);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Section Title */
+.hero-img:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ================= Section Title ================= */
 .section-title-wrap {
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
 }
 
 .section-title {
-  font-size: 1.65rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--color-black);
   display: inline-block;
   position: relative;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.6rem;
+  letter-spacing: -0.01em;
 }
 
 .section-title::after {
@@ -164,33 +216,35 @@ body {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 45px;
+  width: 48px;
   height: 3px;
   background-color: var(--color-red);
+  border-radius: 2px;
 }
 
 .section-subtitle {
   color: var(--color-gray-text);
-  font-size: 0.95rem;
-  margin-top: 0.35rem;
+  font-size: 1rem;
+  margin-top: 0.45rem;
 }
 
-/* Course Card */
+/* ================= Course Cards ================= */
 .course-card {
   background-color: var(--color-white);
   border: 1px solid var(--color-gray-border);
   border-radius: 6px;
-  padding: 1.5rem;
+  padding: 1.65rem;
   height: 100%;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .course-card:hover {
+  transform: translateY(-4px);
   border-color: var(--color-red);
-  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
 }
 
 .course-badge {
@@ -201,63 +255,88 @@ body {
   border: 1px solid rgba(229, 9, 20, 0.2);
   font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.25rem 0.55rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 4px;
   margin-bottom: 0.85rem;
   letter-spacing: 0.04em;
 }
 
 .course-name {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-black);
   margin-bottom: 0.5rem;
 }
 
 .course-desc {
-  font-size: 0.925rem;
+  font-size: 0.95rem;
   color: var(--color-gray-text);
-  line-height: 1.5;
+  line-height: 1.55;
   margin-bottom: 0;
   flex-grow: 1;
 }
 
-/* Forms & Availability */
+.card-link {
+  transition: transform 0.2s ease, color 0.2s ease;
+  display: inline-block;
+}
+
+.card-link:hover {
+  transform: translateX(3px);
+  color: var(--color-red-dark) !important;
+}
+
+/* ================= Form & Availability ================= */
 .form-card {
   background-color: var(--color-white);
   border: 1px solid var(--color-gray-border);
   border-radius: 6px;
-  padding: 2rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  padding: 2.25rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid var(--color-gray-border);
+  border-radius: 4px;
+  padding: 0.65rem 0.85rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-control:focus,
 .form-select:focus {
   border-color: var(--color-red);
-  box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.15);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.14);
 }
 
 #availability {
   border-radius: 4px;
   font-size: 0.95rem;
   font-weight: 500;
+  padding: 0.85rem 1.15rem;
+  transition: all 0.25s ease;
 }
 
-/* Footer */
+#availability.is-updating {
+  opacity: 0.7;
+}
+
+/* ================= Footer ================= */
 .footer-kursusku {
   background-color: var(--color-black);
   color: #A0A0A0;
-  padding: 2rem 0;
+  padding: 2.25rem 0;
   margin-top: auto;
-  border-top: 1px solid var(--color-black-secondary);
+  border-top: 2px solid var(--color-black-secondary);
   font-size: 0.9rem;
 }
 
 .footer-kursusku .footer-brand {
   color: var(--color-white);
   font-weight: 700;
-  font-size: 1.15rem;
-  margin-bottom: 0.25rem;
+  font-size: 1.2rem;
+  margin-bottom: 0.35rem;
 }
 
 .footer-kursusku .footer-brand span {
@@ -268,7 +347,84 @@ body {
   margin-bottom: 0;
 }
 
-/* Responsive */
+/* ================= Animations ================= */
+@keyframes navSlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.anim-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.anim-slide-up-1 {
+  animation: slideUp 0.5s ease-out 0.1s both;
+}
+
+.anim-slide-up-2 {
+  animation: slideUp 0.5s ease-out 0.25s both;
+}
+
+.anim-slide-up-3 {
+  animation: slideUp 0.5s ease-out 0.4s both;
+}
+
+.anim-fade-in-right {
+  animation: fadeInRight 0.6s ease-out 0.2s both;
+}
+
+/* Scroll reveal helper */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 991.98px) {
+  .hero-section {
+    padding: 3rem 0;
+  }
+}
+
 @media (max-width: 768px) {
   .hero-section {
     padding: 2.5rem 0;
@@ -290,6 +446,10 @@ body {
   }
 
   .section-title-wrap {
-    text-align: center;
+    text-align: center !important;
+  }
+
+  .navbar-kursusku .nav-link.active::after {
+    display: none;
   }
 }

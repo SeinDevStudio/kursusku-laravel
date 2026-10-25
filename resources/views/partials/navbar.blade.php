@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-kursusku">
+<nav class="navbar navbar-expand-lg navbar-kursusku sticky-top">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">
             KursusKu<span>.</span>
@@ -7,15 +7,13 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="kursuskuNavbar">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Beranda</a>
                 </li>
-                @if (Route::has('enrollments.create'))
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('enrollments.*') ? 'active' : '' }}" href="{{ route('enrollments.create') }}">Pendaftaran</a>
-                    </li>
-                @endif
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('enrollments.*') || request()->routeIs('registration') ? 'active' : '' }}" href="{{ route('enrollments.create') }}">Pendaftaran</a>
+                </li>
             </ul>
         </div>
     </div>
