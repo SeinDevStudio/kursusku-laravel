@@ -2,12 +2,25 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class EnrollmentTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_home_page_is_accessible(): void
     {
+        \App\Models\Course::create([
+            'code' => 'WEB-01',
+            'name' => 'Web Dasar',
+            'description' => 'Belajar struktur HTML dan CSS dasar.',
+            'fee' => 150000,
+            'quota' => 20,
+            'start_date' => '2026-11-10',
+            'status' => 'open',
+        ]);
+
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('KursusKu');

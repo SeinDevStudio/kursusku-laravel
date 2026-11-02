@@ -1,52 +1,102 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
 /* ==========================================================
- * KursusKu - Desain Visual Merah Hitam (Modern & Responsive)
+ * KursusKu - Global Design System (Modern, Clean, Human-Designed)
+ * Visual Balance: 70% Clean/White, 20% Dark, 10% Red Accent
  * ========================================================== */
 
 :root {
   --color-black: #111111;
-  --color-black-secondary: #1A1A1A;
+  --color-black-surface: #181818;
+  --color-black-secondary: #222222;
+  --color-black-muted: #2A2A2A;
   --color-red: #E50914;
-  --color-red-dark: #B20710;
+  --color-red-hover: #C10811;
+  --color-red-subtle: rgba(229, 9, 20, 0.08);
+  --color-red-ring: rgba(229, 9, 20, 0.16);
   --color-white: #FFFFFF;
-  --color-gray-light: #F5F5F5;
-  --color-gray-border: #E5E5E5;
-  --color-gray-text: #6B6B6B;
+  --color-gray-bg: #F8F9FA;
+  --color-gray-card: #FFFFFF;
+  --color-gray-border: #E5E7EB;
+  --color-gray-text: #6B7280;
+  --color-gray-dark: #374151;
+  --color-gray-light: #F3F4F6;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
+/* ==========================================================
+ * BASE TYPOGRAPHY & LAYOUT
+ * ========================================================== */
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--color-gray-light);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-gray-bg);
   color: var(--color-black);
   line-height: 1.6;
+  font-size: 15px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ================= Navbar ================= */
+.container,
+.container-lg,
+.container-xl {
+  max-width: 1240px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* ==========================================================
+ * NAVBAR (Compact: 64px, Professional Dark, Clean Brand)
+ * ========================================================== */
 .navbar-kursusku {
   background-color: var(--color-black);
   border-bottom: 2px solid var(--color-red);
-  padding: 0.85rem 0;
-  animation: navSlideDown 0.4s ease-out;
+  padding: 0.65rem 0;
+  min-height: 64px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1030;
+  animation: navFadeSlide 0.35s ease-out;
 }
 
 .navbar-kursusku .navbar-brand {
   color: var(--color-white);
   font-weight: 700;
-  font-size: 1.35rem;
-  letter-spacing: -0.01em;
-  transition: transform 0.2s ease;
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: opacity 0.18s ease;
 }
 
 .navbar-kursusku .navbar-brand:hover {
-  transform: scale(1.02);
+  opacity: 0.95;
 }
 
-.navbar-kursusku .navbar-brand span {
+.navbar-logo-img {
+  height: 36px;
+  width: 36px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 2px;
+}
+
+.brand-text {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brand-text span {
   color: var(--color-red);
 }
 
@@ -55,12 +105,14 @@ body {
   font-weight: 500;
   font-size: 0.95rem;
   padding: 0.5rem 1rem;
+  margin: 0 0.15rem;
   position: relative;
-  transition: color 0.2s ease;
+  transition: color 0.18s ease;
+  border-radius: var(--radius-sm);
 }
 
 .navbar-kursusku .nav-link:hover {
-  color: var(--color-red) !important;
+  color: #FFFFFF !important;
 }
 
 .navbar-kursusku .nav-link.active {
@@ -73,7 +125,7 @@ body {
   position: absolute;
   left: 1rem;
   right: 1rem;
-  bottom: 0.15rem;
+  bottom: 0.1rem;
   height: 2px;
   background-color: var(--color-red);
   border-radius: 2px;
@@ -82,7 +134,6 @@ body {
 .navbar-kursusku .navbar-toggler {
   border-color: rgba(255, 255, 255, 0.25);
   padding: 0.35rem 0.65rem;
-  transition: background-color 0.2s ease;
 }
 
 .navbar-kursusku .navbar-toggler:focus {
@@ -93,26 +144,32 @@ body {
   filter: invert(1);
 }
 
-/* ================= Buttons ================= */
+/* ==========================================================
+ * BUTTONS (Clean, Consistent, No Neon Glow)
+ * ========================================================== */
 .btn-red {
   background-color: var(--color-red);
   color: var(--color-white) !important;
   border: 1px solid var(--color-red);
   font-weight: 600;
   font-size: 0.95rem;
-  padding: 0.65rem 1.4rem;
-  border-radius: 4px;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-sm);
   text-decoration: none;
-  display: inline-block;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+  box-shadow: 0 2px 6px rgba(229, 9, 20, 0.2);
 }
 
 .btn-red:hover,
 .btn-red:focus {
-  background-color: var(--color-red-dark);
-  border-color: var(--color-red-dark);
+  background-color: var(--color-red-hover);
+  border-color: var(--color-red-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.28);
+  box-shadow: 0 6px 14px rgba(229, 9, 20, 0.28);
 }
 
 .btn-red:active {
@@ -126,11 +183,14 @@ body {
   border: 1px solid var(--color-red);
   font-weight: 600;
   font-size: 0.95rem;
-  padding: 0.65rem 1.4rem;
-  border-radius: 4px;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-sm);
   text-decoration: none;
-  display: inline-block;
-  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.18s ease;
 }
 
 .btn-outline-red:hover {
@@ -144,175 +204,611 @@ body {
   transform: translateY(0);
 }
 
-/* ================= Hero Section ================= */
-.hero-section {
+.btn-secondary-clean {
   background-color: var(--color-white);
+  color: var(--color-gray-dark) !important;
+  border: 1px solid var(--color-gray-border);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.18s ease;
+}
+
+.btn-secondary-clean:hover {
+  background-color: var(--color-gray-light);
+  border-color: #D1D5DB;
+  color: var(--color-black) !important;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================
+ * HOMEPAGE HERO (Balanced 2-Column, Proportionate, 520px)
+ * ========================================================== */
+.home-hero-section {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
   border-bottom: 1px solid var(--color-gray-border);
-  padding: 4rem 0 3.5rem;
+  padding: 4.5rem 0 4rem;
 }
 
-.hero-label {
-  display: inline-block;
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: var(--color-red-subtle);
   color: var(--color-red);
-  font-size: 0.85rem;
-  font-weight: 700;
+  border: 1px solid rgba(229, 9, 20, 0.2);
+  font-size: 0.82rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.75rem;
+  letter-spacing: 0.06em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  animation: fadeSlideUp 0.4s ease-out 0.1s both;
 }
 
-.hero-title {
-  font-size: 2.5rem;
+.home-hero-title {
+  font-size: 2.85rem;
   font-weight: 800;
   color: var(--color-black);
-  line-height: 1.25;
-  margin-bottom: 1.2rem;
-  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 1.15rem;
+  letter-spacing: -0.025em;
+  animation: fadeSlideUp 0.4s ease-out 0.2s both;
 }
 
-.hero-desc {
+.home-hero-title span {
+  color: var(--color-red);
+}
+
+.home-hero-desc {
   color: var(--color-gray-text);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  line-height: 1.65;
   margin-bottom: 2rem;
-  max-width: 500px;
+  max-width: 520px;
+  animation: fadeSlideUp 0.4s ease-out 0.3s both;
 }
 
-.hero-img-box {
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  animation: fadeSlideUp 0.4s ease-out 0.4s both;
+}
+
+.home-hero-image-box {
+  position: relative;
   text-align: center;
+  animation: fadeInScale 0.5s ease-out 0.25s both;
 }
 
-.hero-img {
+.home-hero-img {
   width: 100%;
-  max-width: 480px;
-  height: auto;
-  border-radius: 6px;
+  max-width: 500px;
+  height: 360px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--color-gray-border);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.hero-img:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
-}
-
-/* ================= Section Title ================= */
-.section-title-wrap {
-  margin-bottom: 2.25rem;
-}
-
-.section-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-black);
-  display: inline-block;
-  position: relative;
-  padding-bottom: 0.6rem;
-  letter-spacing: -0.01em;
-}
-
-.section-title::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 48px;
-  height: 3px;
-  background-color: var(--color-red);
-  border-radius: 2px;
-}
-
-.section-subtitle {
-  color: var(--color-gray-text);
-  font-size: 1rem;
-  margin-top: 0.45rem;
-}
-
-/* ================= Course Cards ================= */
-.course-card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray-border);
-  border-radius: 6px;
-  padding: 1.65rem;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.course-card:hover {
+.home-hero-img:hover {
   transform: translateY(-4px);
-  border-color: var(--color-red);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12);
 }
 
-.course-badge {
+/* ==========================================================
+ * SECTION HEADINGS
+ * ========================================================== */
+.section-header-wrap {
+  margin-bottom: 2.75rem;
+}
+
+.section-badge-label {
   display: inline-block;
-  align-self: flex-start;
-  background-color: var(--color-gray-light);
   color: var(--color-red);
-  border: 1px solid rgba(229, 9, 20, 0.2);
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
-  margin-bottom: 0.85rem;
-  letter-spacing: 0.04em;
-}
-
-.course-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   margin-bottom: 0.5rem;
 }
 
-.course-desc {
+.section-main-heading {
+  font-size: 2.15rem;
+  font-weight: 700;
+  color: var(--color-black);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 0.6rem;
+}
+
+.section-desc-sub {
+  color: var(--color-gray-text);
+  font-size: 1.05rem;
+  margin-bottom: 0;
+  max-width: 600px;
+}
+
+/* ==========================================================
+ * COURSE CARDS (Strong Card Identity, Rounded 14px)
+ * ========================================================== */
+.course-card-item {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.course-card-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(229, 9, 20, 0.4);
+  box-shadow: var(--shadow-hover);
+}
+
+.course-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.course-card-badge {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-red);
+  background-color: var(--color-red-subtle);
+  border: 1px solid rgba(229, 9, 20, 0.15);
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+}
+
+.course-card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 0.6rem;
+  line-height: 1.35;
+}
+
+.course-card-desc {
+  font-size: 0.95rem;
+  color: var(--color-gray-text);
+  line-height: 1.55;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.course-card-footer {
+  padding-top: 1rem;
+  border-top: 1px solid #F0F1F3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ==========================================================
+ * FEATURES SECTION (Keunggulan KursusKu - 3 Columns)
+ * ========================================================== */
+.features-section {
+  background-color: var(--color-white);
+  border-top: 1px solid var(--color-gray-border);
+  border-bottom: 1px solid var(--color-gray-border);
+  padding: 5rem 0;
+}
+
+.feature-box {
+  background-color: #FAFAFA;
+  border: 1px solid var(--color-gray-border);
+  border-radius: var(--radius-md);
+  padding: 2.25rem 1.75rem;
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.feature-box:hover {
+  transform: translateY(-3px);
+  border-color: rgba(229, 9, 20, 0.3);
+  box-shadow: var(--shadow-card);
+}
+
+.feature-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-red-subtle);
+  color: var(--color-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.feature-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 0.6rem;
+}
+
+.feature-desc {
   font-size: 0.95rem;
   color: var(--color-gray-text);
   line-height: 1.55;
   margin-bottom: 0;
-  flex-grow: 1;
 }
 
-.card-link {
-  transition: transform 0.2s ease, color 0.2s ease;
+/* ==========================================================
+ * CALL TO ACTION (CTA) SECTION (Dark, Clean, Impactful)
+ * ========================================================== */
+.cta-banner-section {
+  background: linear-gradient(135deg, #111111 0%, #1A1A1A 100%);
+  color: var(--color-white);
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--color-black-muted);
+}
+
+.cta-banner-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.cta-banner-desc {
+  font-size: 1.1rem;
+  color: #B5B5B5;
+  margin-bottom: 2rem;
+  max-width: 580px;
+}
+
+/* ==========================================================
+ * COURSES PAGE HERO (Compact: 260px)
+ * ========================================================== */
+.courses-hero-compact {
+  background: linear-gradient(135deg, #0F0F0F 0%, #181818 100%);
+  color: var(--color-white);
+  padding: 3.25rem 0 2.75rem;
+  border-bottom: 1px solid #282828;
+}
+
+.courses-hero-compact-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.courses-hero-compact-title span {
+  color: var(--color-red);
+}
+
+.courses-hero-compact-desc {
+  font-size: 1.05rem;
+  color: #A3A3A3;
+  margin-bottom: 0;
+  max-width: 600px;
+}
+
+/* ==========================================================
+ * COURSES TABLE & CONTAINER (Max Width 1240px, Highly Legible)
+ * ========================================================== */
+.courses-content-wrapper {
+  margin-top: 2.5rem; /* Clean 40px gap between Dark Hero and Course Container */
+  margin-bottom: 4.5rem;
+}
+
+.courses-table-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.courses-table-header {
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--color-gray-border);
+  background-color: #FAFAFA;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.courses-header-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 0.15rem;
+}
+
+.courses-header-subtitle {
+  font-size: 0.92rem;
+  color: var(--color-gray-text);
+  margin-bottom: 0;
+}
+
+/* Table Design */
+.table-courses-clean {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-courses-clean thead th {
+  background-color: var(--color-black);
+  color: #F3F4F6;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.25rem;
+  border: none;
+  white-space: nowrap;
+}
+
+.table-courses-clean tbody tr {
+  background-color: var(--color-white);
+  transition: background-color 0.16s ease;
+}
+
+.table-courses-clean tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.table-courses-clean tbody td {
+  padding: 1.1rem 1.25rem;
+  vertical-align: middle;
+  border-top: 1px solid #F0F1F3;
+  border-bottom: none;
+  font-size: 0.95rem;
+}
+
+.course-name-text {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--color-black);
+  margin-bottom: 0.2rem;
+}
+
+.course-desc-text {
+  font-size: 0.86rem;
+  color: var(--color-gray-text);
+  line-height: 1.45;
+  margin-bottom: 0;
+  max-width: 320px;
+}
+
+.course-fee-bold {
+  font-weight: 700;
+  color: var(--color-red);
+  font-size: 0.98rem;
+}
+
+.course-code-pill {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.84rem;
+  font-weight: 600;
+  background-color: var(--color-gray-light);
+  color: var(--color-black);
+  border: 1px solid var(--color-gray-border);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
   display: inline-block;
 }
 
-.card-link:hover {
-  transform: translateX(3px);
-  color: var(--color-red-dark) !important;
+.quota-tag {
+  display: inline-block;
+  background-color: var(--color-gray-light);
+  color: var(--color-gray-dark);
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid var(--color-gray-border);
 }
 
-/* ================= Form & Availability ================= */
-.form-card {
+/* Status Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+}
+
+.status-pill-open {
+  background-color: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.status-pill-open::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10B981;
+}
+
+.status-pill-closed {
+  background-color: #FEF2F2;
+  color: #991B1B;
+  border: 1px solid #FECACA;
+}
+
+.status-pill-closed::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #EF4444;
+}
+
+.status-pill-draft {
+  background-color: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+}
+
+.status-pill-draft::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #9CA3AF;
+}
+
+/* ==========================================================
+ * PENDAFTARAN (ENROLLMENT) HERO & CARD
+ * ========================================================== */
+.enrollment-hero-compact {
+  background: linear-gradient(135deg, #0F0F0F 0%, #181818 100%);
+  color: var(--color-white);
+  padding: 3.25rem 0 2.75rem;
+  border-bottom: 1px solid #282828;
+}
+
+.enrollment-hero-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  color: var(--color-white);
+}
+
+.enrollment-hero-title span {
+  color: var(--color-red);
+}
+
+.enrollment-hero-desc {
+  font-size: 1.05rem;
+  color: #A3A3A3;
+  margin-bottom: 0;
+  max-width: 600px;
+}
+
+.enrollment-content-wrapper {
+  margin-top: 2.5rem; /* Clean 40px gap after hero */
+  margin-bottom: 4.5rem;
+}
+
+.enrollment-card-wrapper {
+  max-width: 980px;
+  margin: 0 auto;
   background-color: var(--color-white);
   border: 1px solid var(--color-gray-border);
-  border-radius: 6px;
-  padding: 2.25rem;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
-  animation: fadeIn 0.4s ease-out;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
 }
 
-.form-control,
-.form-select {
-  border: 1px solid var(--color-gray-border);
-  border-radius: 4px;
-  padding: 0.65rem 0.85rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.enrollment-info-sidebar {
+  background: linear-gradient(145deg, #141414 0%, #1E1E1E 100%);
+  color: var(--color-white);
+  padding: 2.75rem 2.25rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #2B2B2B;
 }
 
-.form-control:focus,
-.form-select:focus {
-  border-color: var(--color-red);
-  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.14);
+.enrollment-info-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
+}
+
+.enrollment-info-title span {
+  color: var(--color-red);
+}
+
+.enrollment-info-desc {
+  font-size: 0.92rem;
+  color: #A3A3A3;
+  line-height: 1.55;
+  margin-bottom: 2rem;
+}
+
+.enrollment-benefit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+}
+
+.enrollment-benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.93rem;
+  color: #E5E7EB;
+}
+
+.enrollment-benefit-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-red);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.enrollment-info-badge {
+  background-color: rgba(229, 9, 20, 0.12);
+  border: 1px solid rgba(229, 9, 20, 0.25);
+  color: #FFA3A8;
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.enrollment-form-panel {
+  padding: 2.75rem 2.5rem;
+}
+
+.enrollment-form-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 0.35rem;
+}
+
+.enrollment-form-subtitle {
+  font-size: 0.94rem;
+  color: var(--color-gray-text);
+  margin-bottom: 1.75rem;
 }
 
 #availability {
-  border-radius: 4px;
-  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
   font-weight: 500;
   padding: 0.85rem 1.15rem;
   transition: all 0.25s ease;
@@ -322,33 +818,145 @@ body {
   opacity: 0.7;
 }
 
-/* ================= Footer ================= */
-.footer-kursusku {
-  background-color: var(--color-black);
-  color: #A0A0A0;
-  padding: 2.25rem 0;
-  margin-top: auto;
-  border-top: 2px solid var(--color-black-secondary);
-  font-size: 0.9rem;
+/* ==========================================================
+ * CREATE COURSE FORM (Container 940px, Radius 16px)
+ * ========================================================== */
+.create-course-container {
+  max-width: 940px;
+  margin: 0 auto;
 }
 
-.footer-kursusku .footer-brand {
+.create-form-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.form-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-black);
+  margin-bottom: 0.45rem;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid #D1D5DB;
+  border-radius: var(--radius-sm);
+  padding: 0.68rem 0.95rem;
+  min-height: 46px;
+  font-size: 0.96rem;
+  color: var(--color-black);
+  background-color: var(--color-white);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-red);
+  box-shadow: 0 0 0 3px var(--color-red-ring);
+  outline: none;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #DC2626;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.invalid-feedback {
+  font-size: 0.85rem;
+  color: #DC2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  display: block;
+}
+
+.form-helper-text {
+  font-size: 0.83rem;
+  color: var(--color-gray-text);
+  margin-top: 0.35rem;
+  display: block;
+}
+
+/* ==========================================================
+ * ALERTS
+ * ========================================================== */
+.alert-kursusku-success {
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.alert-kursusku-danger {
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+/* ==========================================================
+ * FOOTER (Clean, Professional, Dark)
+ * ========================================================== */
+.footer-kursusku-pro {
+  background-color: var(--color-black);
+  color: #9CA3AF;
+  border-top: 2px solid var(--color-black-muted);
+  padding: 3rem 0 2rem;
+  margin-top: auto;
+  font-size: 0.92rem;
+}
+
+.footer-brand-title {
   color: var(--color-white);
   font-weight: 700;
-  font-size: 1.2rem;
-  margin-bottom: 0.35rem;
+  font-size: 1.35rem;
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.02em;
 }
 
-.footer-kursusku .footer-brand span {
+.footer-brand-title span {
   color: var(--color-red);
 }
 
-.footer-kursusku p {
-  margin-bottom: 0;
+.footer-nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
-/* ================= Animations ================= */
-@keyframes navSlideDown {
+.footer-nav-links a {
+  color: #D1D5DB;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.16s ease;
+}
+
+.footer-nav-links a:hover {
+  color: var(--color-red);
+}
+
+/* ==========================================================
+ * ANIMATION SYSTEM (Subtle, Transform + Opacity, 150-400ms)
+ * ========================================================== */
+@keyframes navFadeSlide {
   from {
     transform: translateY(-100%);
     opacity: 0;
@@ -359,15 +967,10 @@ body {
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
+@keyframes fadeSlideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -375,80 +978,77 @@ body {
   }
 }
 
-@keyframes fadeInRight {
+@keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: scale(1);
   }
 }
 
-.anim-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+/* Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-.anim-slide-up-1 {
-  animation: slideUp 0.5s ease-out 0.1s both;
-}
-
-.anim-slide-up-2 {
-  animation: slideUp 0.5s ease-out 0.25s both;
-}
-
-.anim-slide-up-3 {
-  animation: slideUp 0.5s ease-out 0.4s both;
-}
-
-.anim-fade-in-right {
-  animation: fadeInRight 0.6s ease-out 0.2s both;
-}
-
-/* Scroll reveal helper */
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.reveal-on-scroll.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ================= Responsive ================= */
+/* ==========================================================
+ * RESPONSIVE ADJUSTMENTS
+ * ========================================================== */
 @media (max-width: 991.98px) {
-  .hero-section {
-    padding: 3rem 0;
+  .home-hero-section {
+    padding: 3.5rem 0 3rem;
+  }
+  .home-hero-title {
+    font-size: 2.25rem;
+  }
+  .home-hero-img {
+    margin-top: 2rem;
+    height: 300px;
+  }
+  .courses-hero-compact,
+  .enrollment-hero-compact {
+    padding: 2.5rem 0 2rem;
+  }
+  .enrollment-info-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #2B2B2B;
+    padding: 2rem 1.5rem;
+  }
+  .enrollment-form-panel {
+    padding: 2rem 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  .hero-section {
-    padding: 2.5rem 0;
-    text-align: center;
+  .home-hero-section {
+    padding: 2.75rem 0 2.25rem;
+    text-align: left;
   }
-
-  .hero-desc {
-    margin-left: auto;
-    margin-right: auto;
+  .home-hero-title {
+    font-size: 1.85rem;
   }
-
-  .hero-img-box {
-    margin-top: 2rem;
+  .home-hero-desc {
+    font-size: 1.05rem;
   }
-
-  .section-title::after {
-    left: 50%;
-    transform: translateX(-50%);
+  .home-hero-img {
+    height: 250px;
   }
-
-  .section-title-wrap {
-    text-align: center !important;
+  .section-main-heading {
+    font-size: 1.75rem;
   }
-
+  .create-form-card {
+    padding: 1.5rem 1.25rem;
+  }
   .navbar-kursusku .nav-link.active::after {
     display: none;
   }

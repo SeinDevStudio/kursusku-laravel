@@ -18,3 +18,5 @@ Route::post('/enrollments', [EnrollmentController::class, 'store'])
 
 Route::get('/pendaftaran', fn () => redirect()->route('enrollments.create'))
     ->name('registration');
+
+Route::resource('courses', CourseController::class);

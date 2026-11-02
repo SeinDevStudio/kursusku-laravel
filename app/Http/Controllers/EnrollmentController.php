@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Course;
 
 class EnrollmentController extends Controller
 {
     public function create(): View
     {
-        $courses = CourseController::getCourses();
+        $courses = Course::where('status', 'open')
+            ->orderBy('name')
+            ->get();
+
         return view('enrollments.create', compact('courses'));
     }
 
@@ -28,8 +32,12 @@ class EnrollmentController extends Controller
             'course_id.required' => 'Silakan pilih kursus yang diminati.',
         ]);
 
+        $course = Course::where('code', $validated['course_id'])->first();
+
         $courses = CourseController::getCourses();
-        $courseName = $courses[$validated['course_id']]['name'] ?? $validated['course_id'];
+
+        $courseName = $course?->name
+            ?? ($courses[$validated['course_id']]['name'] ?? $validated['course_id']);
 
         return redirect()->route('enrollments.create')
             ->with('success', "Pendaftaran berhasil! Anda telah terdaftar pada kursus {$courseName}.")
