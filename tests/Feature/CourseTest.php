@@ -173,5 +173,239 @@ class CourseTest extends TestCase
 
         $response->assertSessionHasErrors('status');
     }
-}
 
+    /**
+     * Test 9: GET /courses/{course} berhasil menampilkan halaman detail Course.
+     */
+    public function test_show_page_is_accessible_and_displays_course_details(): void
+    {
+        $course = Course::create([
+            'code' => 'SHOW-01',
+            'name' => 'Detail Course Exploration',
+            'description' => 'Mempelajari detail routing dan model binding',
+            'fee' => 250000,
+            'quota' => 15,
+            'start_date' => '2026-12-10',
+            'status' => 'open',
+        ]);
+
+        $response = $this->get('/courses/' . $course->id);
+
+        $response->assertStatus(200);
+        $response->assertSee('SHOW-01');
+        $response->assertSee('Detail Course Exploration');
+        $response->assertSee('250.000');
+        $response->assertSee('15 orang');
+        $response->assertSee('Dibuka');
+    }
+
+    /**
+     * Test 10: GET /courses/{id} dengan ID tidak valid menghasilkan 404 (Route Model Binding).
+     */
+    public function test_show_non_existent_course_returns_404(): void
+    {
+        $response = $this->get('/courses/99999');
+
+        $response->assertStatus(404);
+    }
+
+    /**
+     * Test 11: POST /courses menolak duplicate code yang sudah ada di database.
+     */
+    public function test_store_rejects_duplicate_code(): void
+    {
+        Course::create([
+            'code' => 'DUP-01',
+            'name' => 'Kursus Asli',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'draft',
+        ]);
+
+        $response = $this->post('/courses', [
+            'code' => 'DUP-01',
+            'name' => 'Kursus Duplikat',
+            'fee' => 120000,
+            'quota' => 25,
+            'start_date' => '2026-12-05',
+            'status' => 'open',
+        ]);
+
+        $response->assertSessionHasErrors('code');
+    }
+
+    /**
+     * Test 12: Boundary validasi kuota 500 valid dan 501 ditolak.
+     */
+    public function test_quota_boundary_500_valid_and_501_invalid(): void
+    {
+        // 500 Valid
+        $response500 = $this->post('/courses', [
+            'code' => 'MAX-500',
+            'name' => 'Kursus Kuota Maksimal',
+            'fee' => 200000,
+            'quota' => 500,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+        $response500->assertRedirect('/courses');
+        $this->assertDatabaseHas('courses', ['code' => 'MAX-500', 'quota' => 500]);
+
+        // 501 Invalid
+        $response501 = $this->post('/courses', [
+            'code' => 'MAX-501',
+            'name' => 'Kursus Melebihi Maksimal',
+            'fee' => 200000,
+            'quota' => 501,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+        $response501->assertSessionHasErrors('quota');
+    }
+
+    /**
+     * Test 13: POST /courses menolak format start_date yang tidak valid.
+     */
+    public function test_validation_rejects_invalid_start_date(): void
+    {
+        $response = $this->post('/courses', [
+            'code' => 'DATE-ERR',
+            'name' => 'Kursus Tanggal Rusak',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => 'bukan-format-tanggal-valid',
+            'status' => 'draft',
+        ]);
+
+        $response->assertSessionHasErrors('start_date');
+    }
+
+    /**
+     * Test 14: GET /courses/{course}/edit berhasil menampilkan form edit dan data saat ini.
+     */
+    public function test_edit_page_is_accessible_and_displays_current_data(): void
+    {
+        $course = Course::create([
+            'code' => 'EDIT-01',
+            'name' => 'Kursus Siap Diedit',
+            'description' => 'Deskripsi sebelum update',
+            'fee' => 175000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'draft',
+        ]);
+
+        $response = $this->get('/courses/' . $course->id . '/edit');
+
+        $response->assertStatus(200);
+        $response->assertSee('Edit Kursus');
+        $response->assertSee('EDIT-01');
+        $response->assertSee('Kursus Siap Diedit');
+        $response->assertSee('175000');
+    }
+
+    /**
+     * Test 15: PUT /courses/{course} update normal tanpa mengubah code sendiri tetap berhasil (unique ignore self).
+     */
+    public function test_update_course_keeping_same_code_succeeds(): void
+    {
+        $course = Course::create([
+            'code' => 'KEEP-01',
+            'name' => 'Nama Lama',
+            'description' => 'Deskripsi Lama',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'draft',
+        ]);
+
+        $response = $this->put('/courses/' . $course->id, [
+            'code' => 'KEEP-01', // code tetap sama
+            'name' => 'Nama Baru Diperbarui',
+            'description' => 'Deskripsi Baru Diperbarui',
+            'fee' => 250000,
+            'quota' => 35,
+            'start_date' => '2026-12-10',
+            'status' => 'open',
+        ]);
+
+        $response->assertRedirect('/courses');
+        $response->assertSessionHas('success', 'Kursus berhasil diperbarui.');
+
+        $this->assertDatabaseHas('courses', [
+            'id' => $course->id,
+            'code' => 'KEEP-01',
+            'name' => 'Nama Baru Diperbarui',
+            'fee' => 250000,
+            'quota' => 35,
+            'status' => 'open',
+        ]);
+    }
+
+    /**
+     * Test 16: PUT /courses/{course} menolak jika code diubah menjadi code milik Course lain.
+     */
+    public function test_update_course_with_duplicate_code_of_another_course_fails(): void
+    {
+        $courseA = Course::create([
+            'code' => 'COURSE-A',
+            'name' => 'Kursus A',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'draft',
+        ]);
+
+        $courseB = Course::create([
+            'code' => 'COURSE-B',
+            'name' => 'Kursus B',
+            'fee' => 150000,
+            'quota' => 25,
+            'start_date' => '2026-12-05',
+            'status' => 'open',
+        ]);
+
+        // Coba ubah Course B agar memakai code 'COURSE-A'
+        $response = $this->put('/courses/' . $courseB->id, [
+            'code' => 'COURSE-A',
+            'name' => 'Kursus B Menggunakan Kode A',
+            'fee' => 150000,
+            'quota' => 25,
+            'start_date' => '2026-12-05',
+            'status' => 'open',
+        ]);
+
+        $response->assertSessionHasErrors('code');
+
+        // Pastikan Course B di database kodenya tidak berubah
+        $this->assertDatabaseHas('courses', [
+            'id' => $courseB->id,
+            'code' => 'COURSE-B',
+        ]);
+    }
+
+    /**
+     * Test 17: DELETE /courses/{course} berhasil menghapus record Course dummy dari database.
+     */
+    public function test_destroy_course_successfully_deletes_record(): void
+    {
+        $course = Course::create([
+            'code' => 'DEL-01',
+            'name' => 'Kursus Target Hapus',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'draft',
+        ]);
+
+        $this->assertDatabaseHas('courses', ['id' => $course->id, 'code' => 'DEL-01']);
+
+        $response = $this->delete('/courses/' . $course->id);
+
+        $response->assertRedirect('/courses');
+        $response->assertSessionHas('success', 'Kursus berhasil dihapus.');
+
+        $this->assertDatabaseMissing('courses', ['id' => $course->id, 'code' => 'DEL-01']);
+    }
+}

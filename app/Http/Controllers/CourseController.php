@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCourseRequest;
+use App\Http\Requests\UpdateCourseRequest;
 use App\Models\Course;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -107,39 +109,44 @@ class CourseController extends Controller
         return view('courses.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreCourseRequest $request)
     {
-        $validated = $request->validate([
-            'code' => ['required', 'string', 'max:20', 'unique:courses,code'],
-            'name' => ['required', 'string', 'max:120'],
-            'description' => ['nullable', 'string'],
-            'fee' => ['required', 'integer', 'min:0'],
-            'quota' => ['required', 'integer', 'min:1', 'max:500'],
-            'start_date' => ['required', 'date'],
-            'status' => ['required', 'in:draft,open,closed'],
-        ], [
-            'code.required' => 'Kode kursus wajib diisi.',
-            'code.max' => 'Kode kursus maksimal 20 karakter.',
-            'code.unique' => 'Kode kursus sudah digunakan.',
-            'name.required' => 'Nama kursus wajib diisi.',
-            'name.max' => 'Nama kursus maksimal 120 karakter.',
-            'fee.required' => 'Biaya kursus wajib diisi.',
-            'fee.integer' => 'Biaya kursus harus berupa bilangan bulat.',
-            'fee.min' => 'Biaya kursus minimal 0.',
-            'quota.required' => 'Kuota peserta wajib diisi.',
-            'quota.integer' => 'Kuota peserta harus berupa bilangan bulat.',
-            'quota.min' => 'Kuota peserta minimal 1 orang.',
-            'quota.max' => 'Kuota peserta maksimal 500 orang.',
-            'start_date.required' => 'Tanggal mulai kursus wajib diisi.',
-            'start_date.date' => 'Format tanggal mulai tidak valid.',
-            'status.required' => 'Status kursus wajib dipilih.',
-            'status.in' => 'Status kursus harus berupa draft, open, atau closed.',
-        ]);
+        $data = $request->validated();
 
-        Course::create($validated);
+        Course::create($data);
 
         return redirect()
             ->route('courses.index')
             ->with('success', 'Kursus berhasil ditambahkan.');
+    }
+
+    public function show(Course $course)
+    {
+        return view('courses.show', compact('course'));
+    }
+
+    public function edit(Course $course)
+    {
+        return view('courses.edit', compact('course'));
+    }
+
+    public function update(UpdateCourseRequest $request, Course $course)
+    {
+        $data = $request->validated();
+
+        $course->update($data);
+
+        return redirect()
+            ->route('courses.index')
+            ->with('success', 'Kursus berhasil diperbarui.');
+    }
+
+    public function destroy(Course $course)
+    {
+        $course->delete();
+
+        return redirect()
+            ->route('courses.index')
+            ->with('success', 'Kursus berhasil dihapus.');
     }
 }

@@ -60,13 +60,14 @@
                 <table class="table-courses-clean">
                     <thead>
                         <tr>
-                            <th class="text-center" style="width: 60px;">No.</th>
-                            <th style="width: 120px;">Kode</th>
+                            <th class="text-center" style="width: 45px;">No.</th>
+                            <th style="width: 95px;">Kode</th>
                             <th>Nama Kursus</th>
-                            <th style="width: 160px;">Biaya</th>
-                            <th class="text-center" style="width: 120px;">Kuota</th>
-                            <th style="width: 150px;">Tanggal Mulai</th>
-                            <th class="text-center" style="width: 130px;">Status</th>
+                            <th style="width: 120px;">Biaya</th>
+                            <th class="text-center" style="width: 95px;">Kuota</th>
+                            <th style="width: 120px;">Tanggal Mulai</th>
+                            <th class="text-center" style="width: 100px;">Status</th>
+                            <th class="text-center" style="width: 160px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,25 +83,25 @@
                                         <p class="course-desc-text text-truncate">{{ $course->description }}</p>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-nowrap">
                                     @if ($course->fee > 0)
                                         <span class="course-fee-bold">Rp {{ number_format($course->fee, 0, ',', '.') }}</span>
                                     @else
                                         <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">Gratis</span>
                                     @endif
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <span class="quota-tag">{{ $course->quota }} orang</span>
                                 </td>
-                                <td>
+                                <td class="text-nowrap">
                                     <span class="d-inline-flex align-items-center gap-1 text-secondary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                                         </svg>
-                                        {{ $course->start_date->format('d/m/Y') }}
+                                        {{ $course->start_date ? $course->start_date->format('d/m/Y') : '-' }}
                                     </span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     @if ($course->status === 'open')
                                         <span class="status-pill status-pill-open">Dibuka</span>
                                     @elseif ($course->status === 'closed')
@@ -109,10 +110,27 @@
                                         <span class="status-pill status-pill-draft">Draft</span>
                                     @endif
                                 </td>
+                                <td class="text-center text-nowrap">
+                                    <div class="action-buttons-group">
+                                        <a href="{{ route('courses.show', $course) }}" class="btn btn-sm btn-outline-secondary" title="Lihat Detail">
+                                            Detail
+                                        </a>
+                                        <a href="{{ route('courses.edit', $course) }}" class="btn btn-sm btn-outline-warning text-dark" title="Edit Kursus">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('courses.destroy', $course) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kursus {{ $course->name }} ({{ $course->code }})?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Kursus">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     <div class="py-4">
                                         <div class="mb-3 text-muted">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2" class="opacity-50">
