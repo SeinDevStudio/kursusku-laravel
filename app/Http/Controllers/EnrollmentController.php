@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Enrollment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\Course;
 
 class EnrollmentController extends Controller
 {
@@ -34,13 +35,19 @@ class EnrollmentController extends Controller
 
         $course = Course::where('code', $validated['course_id'])->first();
 
-        $courses = CourseController::getCourses();
+        if (!$course) {
+            return back()
+                ->withErrors(['course_id' => 'Kursus yang dipilih tidak valid atau belum terdaftar.'])
+                ->withInput();
+        }
 
-        $courseName = $course?->name
-            ?? ($courses[$validated['course_id']]['name'] ?? $validated['course_id']);
+        Enrollment::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'course_id' => $course->id,
+        ]);
 
         return redirect()->route('enrollments.create')
-            ->with('success', "Pendaftaran berhasil! Anda telah terdaftar pada kursus {$courseName}.")
-            ->withInput();
+            ->with('success', "Pendaftaran berhasil! Anda telah terdaftar pada kursus {$course->name}.");
     }
 }

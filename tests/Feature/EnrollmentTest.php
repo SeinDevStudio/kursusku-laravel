@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Course;
+use App\Models\Enrollment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,7 +13,7 @@ class EnrollmentTest extends TestCase
 
     public function test_home_page_is_accessible(): void
     {
-        \App\Models\Course::create([
+        Course::create([
             'code' => 'WEB-01',
             'name' => 'Web Dasar',
             'description' => 'Belajar struktur HTML dan CSS dasar.',
@@ -76,14 +78,30 @@ class EnrollmentTest extends TestCase
 
     public function test_submit_valid_enrollment(): void
     {
+        $course = Course::create([
+            'code' => 'WEB001',
+            'name' => 'Pemrograman Web Laravel',
+            'description' => 'Materi HTML, CSS, dan Laravel',
+            'fee' => 350000,
+            'quota' => 25,
+            'start_date' => '2026-11-15',
+            'status' => 'open',
+        ]);
+
         $response = $this->post('/enrollments', [
             'name' => 'Muhammad Husein',
             'email' => 'husein@example.com',
-            'course_id' => 'WEB-01',
+            'course_id' => $course->code,
         ]);
 
         $response->assertRedirect('/enrollments/create');
         $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('enrollments', [
+            'name' => 'Muhammad Husein',
+            'email' => 'husein@example.com',
+            'course_id' => $course->id,
+        ]);
     }
 
     public function test_submit_invalid_email_fails_validation(): void
@@ -106,5 +124,20 @@ class EnrollmentTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors('name');
+    }
+
+    public function test_submit_non_existent_course_code_fails_validation(): void
+    {
+        $response = $this->post('/enrollments', [
+            'name' => 'Muhammad Husein',
+            'email' => 'husein@example.com',
+            'course_id' => 'KODE-TIDAK-ADA',
+        ]);
+
+        $response->assertSessionHasErrors('course_id');
+        $this->assertDatabaseMissing('enrollments', [
+            'name' => 'Muhammad Husein',
+            'email' => 'husein@example.com',
+        ]);
     }
 }
