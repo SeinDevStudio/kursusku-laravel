@@ -8,14 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Enrollment extends Model
 {
     protected $fillable = [
-        'name',
-        'email',
+        'participant_id',
         'course_id',
+        'status',
     ];
+
+    public function participant(): BelongsTo
+    {
+        return $this->belongsTo(Participant::class);
+    }
 
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
     }
 }
-

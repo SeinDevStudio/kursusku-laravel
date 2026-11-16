@@ -10,11 +10,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses/{course}/availability', [CourseController::class, 'availability'])
     ->name('courses.availability');
 
-Route::get('/enrollments/create', [EnrollmentController::class, 'create'])
-    ->name('enrollments.create');
-
-Route::post('/enrollments', [EnrollmentController::class, 'store'])
-    ->name('enrollments.store');
+Route::resource('enrollments', EnrollmentController::class)->only(['index', 'create', 'store']);
 
 Route::get('/pendaftaran', fn () => redirect()->route('enrollments.create'))
     ->name('registration');
