@@ -44,7 +44,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <span class="badge bg-light text-dark border px-3 py-2 fw-medium rounded-pill">
-                        {{ $courses->count() }} Kursus Terdaftar
+                        {{ $courses->total() }} Kursus Terdaftar
                     </span>
                     <a href="{{ route('courses.create') }}" class="btn-red">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -53,6 +53,40 @@
                         Tambah Kursus
                     </a>
                 </div>
+            </div>
+
+            <!-- Search & Filter Form (Fallback without JS) -->
+            <div class="p-3 px-4 border-bottom bg-light">
+                <form method="GET" action="{{ route('courses.index') }}" class="row g-2 align-items-center">
+                    <div class="col-md-5 col-12">
+                        <label for="q" class="visually-hidden">Cari kursus</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="q"
+                            value="{{ $q ?? request('q') }}"
+                            class="form-control"
+                            placeholder="Cari kode atau nama kursus..."
+                        >
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <label for="status" class="visually-hidden">Filter status</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="">Semua Status</option>
+                            <option value="open" @selected(($status ?? request('status')) === 'open')>Dibuka (Open)</option>
+                            <option value="closed" @selected(($status ?? request('status')) === 'closed')>Ditutup (Closed)</option>
+                            <option value="draft" @selected(($status ?? request('status')) === 'draft')>Draft</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-12 d-flex gap-2">
+                        <button type="submit" class="btn-red flex-grow-1 flex-md-grow-0 justify-content-center">
+                            Cari
+                        </button>
+                        <a href="{{ route('courses.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
+                            Reset
+                        </a>
+                    </div>
+                </form>
             </div>
 
             <!-- Clean & Spacious Table -->
@@ -73,7 +107,7 @@
                     <tbody>
                         @forelse ($courses as $course)
                             <tr>
-                                <td class="text-center fw-semibold text-muted">{{ $loop->iteration }}</td>
+                                <td class="text-center fw-semibold text-muted">{{ ($courses->firstItem() ?? 0) + $loop->index }}</td>
                                 <td>
                                     <span class="course-code-pill">{{ $course->code }}</span>
                                 </td>
@@ -137,11 +171,19 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                                             </svg>
                                         </div>
-                                        <h5 class="fw-semibold text-dark mb-1">Belum Ada Data Kursus</h5>
-                                        <p class="text-muted small mb-3">Tabel database masih kosong. Mulai tambahkan kursus pertama Anda.</p>
-                                        <a href="{{ route('courses.create') }}" class="btn-red">
-                                            + Tambah Kursus Sekarang
-                                        </a>
+                                        @if (($q ?? '') !== '' || in_array(($status ?? ''), ['open', 'closed', 'draft'], true))
+                                            <h5 class="fw-semibold text-dark mb-1">Kursus Tidak Ditemukan</h5>
+                                            <p class="text-muted small mb-3">Tidak ada kursus yang sesuai dengan kata kunci pencarian atau filter status yang dipilih.</p>
+                                            <a href="{{ route('courses.index') }}" class="btn-red">
+                                                Hapus Pencarian &amp; Filter
+                                            </a>
+                                        @else
+                                            <h5 class="fw-semibold text-dark mb-1">Belum Ada Data Kursus</h5>
+                                            <p class="text-muted small mb-3">Tabel database masih kosong. Mulai tambahkan kursus pertama Anda.</p>
+                                            <a href="{{ route('courses.create') }}" class="btn-red">
+                                                + Tambah Kursus Sekarang
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -149,6 +191,17 @@
                     </tbody>
                 </table>
             </div>
+
+            @if ($courses->hasPages())
+                <div class="p-3 px-4 border-top d-flex flex-wrap justify-content-between align-items-center gap-2 bg-light">
+                    <div class="text-muted small">
+                        Menampilkan {{ $courses->firstItem() }}&ndash;{{ $courses->lastItem() }} dari {{ $courses->total() }} kursus
+                    </div>
+                    <div>
+                        {{ $courses->links() }}
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </section>

@@ -97,11 +97,26 @@ class CourseController extends Controller
         return $slugMap[$lookupKey] ?? $lookupKey;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::latest()->get();
+        $q = trim((string) $request->query('q', ''));
+        $status = (string) $request->query('status', '');
 
-        return view('courses.index', compact('courses'));
+        $courses = Course::query()
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where(function ($subQuery) use ($q) {
+                    $subQuery->where('code', 'like', "%{$q}%")
+                        ->orWhere('name', 'like', "%{$q}%");
+                });
+            })
+            ->when(in_array($status, ['open', 'closed', 'draft'], true), function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('courses.index', compact('courses', 'q', 'status'));
     }
 
     public function create()

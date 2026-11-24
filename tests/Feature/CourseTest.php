@@ -408,4 +408,281 @@ class CourseTest extends TestCase
 
         $this->assertDatabaseMissing('courses', ['id' => $course->id, 'code' => 'DEL-01']);
     }
+
+    /**
+     * Test 18: Pencarian berdasarkan kode Course (?q=...).
+     */
+    public function test_search_courses_by_code(): void
+    {
+        Course::create([
+            'code' => 'WEB-101',
+            'name' => 'HTML Dasar',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+
+        Course::create([
+            'code' => 'PYT-202',
+            'name' => 'Python Dasar',
+            'fee' => 150000,
+            'quota' => 20,
+            'start_date' => '2026-12-02',
+            'status' => 'open',
+        ]);
+
+        $response = $this->get('/courses?q=PYT-202');
+
+        $response->assertStatus(200);
+        $response->assertSee('PYT-202');
+        $response->assertSee('Python Dasar');
+        $response->assertDontSee('WEB-101');
+    }
+
+    /**
+     * Test 19: Pencarian berdasarkan nama Course (?q=...).
+     */
+    public function test_search_courses_by_name(): void
+    {
+        Course::create([
+            'code' => 'LAR-301',
+            'name' => 'Laravel Lanjutan',
+            'fee' => 250000,
+            'quota' => 15,
+            'start_date' => '2026-12-03',
+            'status' => 'open',
+        ]);
+
+        Course::create([
+            'code' => 'SQL-101',
+            'name' => 'Database MySQL',
+            'fee' => 120000,
+            'quota' => 20,
+            'start_date' => '2026-12-04',
+            'status' => 'open',
+        ]);
+
+        $response = $this->get('/courses?q=Laravel');
+
+        $response->assertStatus(200);
+        $response->assertSee('LAR-301');
+        $response->assertSee('Laravel Lanjutan');
+        $response->assertDontSee('SQL-101');
+    }
+
+    /**
+     * Test 20: Filter status open.
+     */
+    public function test_filter_courses_by_status_open(): void
+    {
+        Course::create([
+            'code' => 'OPEN-01',
+            'name' => 'Kursus Terbuka',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+
+        Course::create([
+            'code' => 'CLOSED-01',
+            'name' => 'Kursus Tutup',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'closed',
+        ]);
+
+        Course::create([
+            'code' => 'DRAFT-01',
+            'name' => 'Kursus Draft',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'draft',
+        ]);
+
+        $response = $this->get('/courses?status=open');
+
+        $response->assertStatus(200);
+        $response->assertSee('OPEN-01');
+        $response->assertDontSee('CLOSED-01');
+        $response->assertDontSee('DRAFT-01');
+    }
+
+    /**
+     * Test 21: Filter status closed.
+     */
+    public function test_filter_courses_by_status_closed(): void
+    {
+        Course::create([
+            'code' => 'OPEN-02',
+            'name' => 'Kursus Terbuka 2',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+
+        Course::create([
+            'code' => 'CLOSED-02',
+            'name' => 'Kursus Tutup 2',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'closed',
+        ]);
+
+        $response = $this->get('/courses?status=closed');
+
+        $response->assertStatus(200);
+        $response->assertSee('CLOSED-02');
+        $response->assertDontSee('OPEN-02');
+    }
+
+    /**
+     * Test 22: Filter status draft.
+     */
+    public function test_filter_courses_by_status_draft(): void
+    {
+        Course::create([
+            'code' => 'OPEN-03',
+            'name' => 'Kursus Terbuka 3',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+
+        Course::create([
+            'code' => 'DRAFT-03',
+            'name' => 'Kursus Draft 3',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'draft',
+        ]);
+
+        $response = $this->get('/courses?status=draft');
+
+        $response->assertStatus(200);
+        $response->assertSee('DRAFT-03');
+        $response->assertDontSee('OPEN-03');
+    }
+
+    /**
+     * Test 23: Kombinasi pencarian q dan filter status.
+     */
+    public function test_search_and_filter_combination(): void
+    {
+        Course::create([
+            'code' => 'WEB-OPEN',
+            'name' => 'Web Programming Open',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+
+        Course::create([
+            'code' => 'WEB-CLOSED',
+            'name' => 'Web Programming Closed',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'closed',
+        ]);
+
+        Course::create([
+            'code' => 'MOB-OPEN',
+            'name' => 'Mobile Programming Open',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+
+        $response = $this->get('/courses?q=Programming&status=open');
+
+        $response->assertStatus(200);
+        $response->assertSee('WEB-OPEN');
+        $response->assertSee('MOB-OPEN');
+        $response->assertDontSee('WEB-CLOSED');
+    }
+
+    /**
+     * Test 24: Pagination maksimal 10 data per halaman.
+     */
+    public function test_courses_pagination_limits_to_10_per_page(): void
+    {
+        for ($i = 1; $i <= 12; $i++) {
+            Course::create([
+                'code' => sprintf('CRS-%02d', $i),
+                'name' => "Kursus Ke-{$i}",
+                'fee' => 100000,
+                'quota' => 20,
+                'start_date' => '2026-12-01',
+                'status' => 'open',
+            ]);
+        }
+
+        $response = $this->get('/courses');
+
+        $response->assertStatus(200);
+        $response->assertViewHas('courses', function ($courses) {
+            return $courses->count() === 10 && $courses->total() === 12;
+        });
+        $response->assertSee('12 Kursus Terdaftar');
+    }
+
+    /**
+     * Test 25: Parameter pencarian dan filter tetap dipertahankan pada pagination (withQueryString).
+     */
+    public function test_pagination_preserves_search_and_filter_query_string(): void
+    {
+        for ($i = 1; $i <= 12; $i++) {
+            Course::create([
+                'code' => sprintf('LAR-%02d', $i),
+                'name' => "Laravel Batch {$i}",
+                'fee' => 100000,
+                'quota' => 20,
+                'start_date' => '2026-12-01',
+                'status' => 'open',
+            ]);
+        }
+
+        $response = $this->get('/courses?q=Laravel&status=open');
+
+        $response->assertStatus(200);
+        $response->assertSee('q=Laravel', false);
+        $response->assertSee('status=open', false);
+
+        $page2 = $this->get('/courses?q=Laravel&status=open&page=2');
+        $page2->assertStatus(200);
+        $page2->assertViewHas('courses', function ($courses) {
+            return $courses->count() === 2 && $courses->currentPage() === 2;
+        });
+    }
+
+    /**
+     * Test 26: Empty state tampil ketika pencarian atau filter tidak menemukan hasil.
+     */
+    public function test_empty_state_displays_when_search_has_no_results(): void
+    {
+        Course::create([
+            'code' => 'EXIST-01',
+            'name' => 'Kursus Tersedia',
+            'fee' => 100000,
+            'quota' => 20,
+            'start_date' => '2026-12-01',
+            'status' => 'open',
+        ]);
+
+        $response = $this->get('/courses?q=TIDAK_ADA_SAMA_SEKALI');
+
+        $response->assertStatus(200);
+        $response->assertSee('Kursus Tidak Ditemukan');
+        $response->assertSee('Hapus Pencarian &amp; Filter', false);
+    }
 }

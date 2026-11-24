@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Participant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -78,6 +79,12 @@ class EnrollmentTest extends TestCase
 
     public function test_submit_valid_enrollment(): void
     {
+        $participant = Participant::create([
+            'name' => 'Muhammad Husein',
+            'email' => 'husein@example.com',
+            'phone' => '081234567890',
+        ]);
+
         $course = Course::create([
             'code' => 'WEB001',
             'name' => 'Pemrograman Web Laravel',
@@ -89,41 +96,67 @@ class EnrollmentTest extends TestCase
         ]);
 
         $response = $this->post('/enrollments', [
-            'name' => 'Muhammad Husein',
-            'email' => 'husein@example.com',
-            'course_id' => $course->code,
-        ]);
-
-        $response->assertRedirect('/enrollments/create');
-        $response->assertSessionHas('success');
-
-        $this->assertDatabaseHas('enrollments', [
-            'name' => 'Muhammad Husein',
-            'email' => 'husein@example.com',
+            'participant_id' => $participant->id,
             'course_id' => $course->id,
         ]);
+
+        $response->assertRedirect('/enrollments');
+        $response->assertSessionHas('success', 'Enrollment berhasil disimpan.');
+
+        $this->assertDatabaseHas('enrollments', [
+            'participant_id' => $participant->id,
+            'course_id' => $course->id,
+            'status' => 'registered',
+        ]);
     }
 
-    public function test_submit_invalid_email_fails_validation(): void
+    public function test_submit_invalid_participant_fails_validation(): void
     {
-        $response = $this->post('/enrollments', [
-            'name' => 'Muhammad Husein',
-            'email' => 'bukan-email-valid',
-            'course_id' => 'WEB-01',
+        $course = Course::create([
+            'code' => 'WEB-01',
+            'name' => 'Web Dasar',
+            'fee' => 150000,
+            'quota' => 20,
+            'start_date' => '2026-11-15',
+            'status' => 'open',
         ]);
 
-        $response->assertSessionHasErrors('email');
+        $response = $this->post('/enrollments', [
+            'participant_id' => 99999,
+            'course_id' => $course->id,
+        ]);
+
+        $response->assertSessionHasErrors('participant_id');
     }
 
-    public function test_submit_invalid_name_fails_validation(): void
+    public function test_submit_duplicate_enrollment_fails_validation(): void
     {
-        $response = $this->post('/enrollments', [
-            'name' => 'Al',
-            'email' => 'husein@example.com',
-            'course_id' => 'WEB-01',
+        $participant = Participant::create([
+            'name' => 'Alya Rahma',
+            'email' => 'alya@example.test',
         ]);
 
-        $response->assertSessionHasErrors('name');
+        $course = Course::create([
+            'code' => 'WEB-01',
+            'name' => 'Web Dasar',
+            'fee' => 150000,
+            'quota' => 20,
+            'start_date' => '2026-11-15',
+            'status' => 'open',
+        ]);
+
+        Enrollment::create([
+            'participant_id' => $participant->id,
+            'course_id' => $course->id,
+            'status' => 'registered',
+        ]);
+
+        $response = $this->post('/enrollments', [
+            'participant_id' => $participant->id,
+            'course_id' => $course->id,
+        ]);
+
+        $response->assertSessionHasErrors('course_id');
     }
 
     public function test_submit_non_existent_course_code_fails_validation(): void

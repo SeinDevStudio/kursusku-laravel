@@ -6,7 +6,7 @@ Project praktikum Pemrograman Web III — Platform edukasi kursus web interaktif
 - PHP 8.3 atau lebih baru
 - Composer 2.x
 - Node.js (v20+ / v22+) & npm
-- Laravel 11 / 12
+- Laravel 13
 - Laragon / web server lokal (Windows) dengan MySQL aktif
 - Git
 
@@ -233,6 +233,36 @@ Komponen teknis yang diimplementasikan untuk modul enrollment:
 - **Enrollments**: 4 record pendaftaran aktif berstatus `registered` (1 pendaftaran awal Muhammad Husein + 3 pendaftaran hasil pengujian E2E).
 - **Pembersihan Data**: Seluruh data dummy yang dibuat khusus untuk pengujian cascade delete telah dibersihkan secara tuntas dari database MySQL.
 
+### Milestone Week-13: Searching, Filter Status, dan Pagination
+
+#### A. Search Course
+- Pencarian pada halaman daftar kursus menggunakan parameter GET `q`.
+- Pencarian mencocokkan kata kunci pada kolom `code` dan `name` menggunakan Eloquent Query Builder (`where` / `orWhere` dengan `like`).
+
+#### B. Filter Status
+- Filter daftar kursus berdasarkan status `open`, `closed`, dan `draft`.
+- Parameter `q` dan `status` dapat digunakan secara bersamaan maupun terpisah.
+
+#### C. Pagination
+- Daftar kursus dipaginasi sebanyak 10 data per halaman menggunakan `paginate(10)`.
+- Menggunakan `withQueryString()` agar parameter `q` dan `status` tetap dipertahankan saat berpindah halaman.
+- Menggunakan tampilan pagination Bootstrap 5 melalui `Paginator::useBootstrapFive()` pada `AppServiceProvider::boot()`.
+
+#### D. Tampilan Course Index (`resources/views/courses/index.blade.php`)
+- Form `GET` menuju `route('courses.index')` berisi input pencarian `q`, dropdown filter `status`, tombol **Cari**, dan tombol **Reset**.
+- Badge jumlah menampilkan total seluruh hasil pencarian/filter menggunakan `$courses->total()`.
+- Penomoran baris tabel mengikuti posisi halaman pagination menggunakan `($courses->firstItem() ?? 0) + $loop->index`.
+- Menampilkan empty state khusus (*"Kursus Tidak Ditemukan"*) beserta tombol **Hapus Pencarian & Filter** ketika hasil pencarian atau filter kosong, serta pagination links `$courses->links()`.
+- Seluruh fitur pencarian, filter, dan pagination bekerja melalui request GET standar tanpa bergantung pada JavaScript.
+
+#### E. Automated Testing
+- Penambahan 9 pengujian Feature baru pada `tests/Feature/CourseTest.php` (pencarian berdasarkan kode, pencarian berdasarkan nama, filter `open`/`closed`/`draft`, kombinasi search dan filter, pagination 10 data per halaman, retensi query string `withQueryString()`, dan empty state).
+- Penyesuaian 3 pengujian lama pada `tests/Feature/EnrollmentTest.php` agar sesuai dengan skema Week-12 (`participant_id` dan `course_id` berupa ID).
+- **Hasil PHPUnit** (dijalankan dengan konfigurasi `phpunit.xml` menggunakan SQLite in-memory, bukan pengujian langsung ke MySQL melalui browser):
+  - **Total:** 38 tests (120 assertions)
+  - **PASS:** 38
+  - **FAIL:** 0
+
 ---
 
 ## Daftar Rute Aplikasi (`routes/web.php`)
@@ -267,15 +297,13 @@ evidence/
 │   ├── 04-mobile-view.png
 │   ├── 05-git-log.png
 │   ├── request-lifecycle.pdf
-│   ├── request-lifecycle.png
-│   └── ai-usage-log.md
+│   └── request-lifecycle.png
 ├── week-09/
 │   ├── 01-home.png               # Screenshot Beranda dengan Bootstrap Navbar
 │   ├── 02-form.png               # Screenshot Formulir Pendaftaran
 │   ├── 03-availability.png       # Screenshot Hasil Ajax Ketersediaan Kursus
 │   ├── 04-network-json.png       # Screenshot DevTools Network & Respon JSON
-│   ├── test-matrix.md            # Matriks 16 Skenario Pengujian Sistem
-│   └── ai-usage-log.md           # Catatan Penggunaan AI Assistant
+│   └── test-matrix.md            # Matriks 16 Skenario Pengujian Sistem
 ├── week-10/
 │   ├── 01-database.png           # Screenshot Database MySQL kursusku
 │   ├── 02-courses-structure.png  # Screenshot Struktur Skema Tabel courses
@@ -294,29 +322,33 @@ evidence/
 │   ├── 07-delete-success.png     # Screenshot Notifikasi Sukses Penghapusan Kursus
 │   ├── 08-test-result.png        # Screenshot Hasil Automated Test Terminal
 │   └── test-cases.md             # Dokumentasi 12+ Skenario Uji CRUD Course II
-└── week-12/
-    ├── 01-erd-final.png          # Screenshot ERD Skema Relasional
-    ├── 02-screenshot-migration.png # Screenshot Status Migrasi Database
-    ├── 03-foreign-key-database.png # Screenshot DDL Constraint Foreign Key
-    ├── 04-source-migration-1.png # Screenshot Source Migration Participants
-    ├── 04-source-migration-2.png # Screenshot Source Migration Enrollments
-    ├── 05-model-course.png       # Screenshot Relasi Model Course
-    ├── 05-model-enrollment.png   # Screenshot Relasi Model Enrollment
-    ├── 05-model-participant.png  # Screenshot Relasi Model Participant
-    ├── 06-controller-create.png  # Screenshot Controller Method create()
-    ├── 06-controller-index.png   # Screenshot Controller Method index()
-    ├── 06-controller-store.png   # Screenshot Controller Method store()
-    ├── 07-form-enrollment.png    # Screenshot Formulir Pendaftaran Dropdown
-    ├── 08-duplicate-message.png  # Screenshot Notifikasi Penolakan Duplikasi
-    ├── 09-laporan-enrollment.png # Screenshot Tabel Laporan Enrollment
-    ├── 10-cascade-delete-course.png.png # Screenshot Uji Cascade Delete Course
-    ├── 11-cascade-delete-participant.png.png # Screenshot Uji Cascade Delete Participant
-    └── test-case.md              # Dokumentasi Kasus Uji Cascade Delete
+├── week-12/
+│   ├── 01-erd-final.png          # Screenshot ERD Skema Relasional
+│   ├── 02-screenshot-migration.png # Screenshot Status Migrasi Database
+│   ├── 03-foreign-key-database.png # Screenshot DDL Constraint Foreign Key
+│   ├── 04-source-migration-1.png # Screenshot Source Migration Participants
+│   ├── 04-source-migration-2.png # Screenshot Source Migration Enrollments
+│   ├── 05-model-course.png       # Screenshot Relasi Model Course
+│   ├── 05-model-enrollment.png   # Screenshot Relasi Model Enrollment
+│   ├── 05-model-participant.png  # Screenshot Relasi Model Participant
+│   ├── 06-controller-create.png  # Screenshot Controller Method create()
+│   ├── 06-controller-index.png   # Screenshot Controller Method index()
+│   ├── 06-controller-store.png   # Screenshot Controller Method store()
+│   ├── 07-form-enrollment.png    # Screenshot Formulir Pendaftaran Dropdown
+│   ├── 08-duplicate-message.png  # Screenshot Notifikasi Penolakan Duplikasi
+│   ├── 09-laporan-enrollment.png # Screenshot Tabel Laporan Enrollment
+│   ├── 10-cascade-delete-course.png.png # Screenshot Uji Cascade Delete Course
+│   ├── 11-cascade-delete-participant.png.png # Screenshot Uji Cascade Delete Participant
+│   └── test-case.md              # Dokumentasi Kasus Uji Cascade Delete
+└── week-13/
+    ├── 01-search-empty.png
+    ├── 02-search-single-result.png
+    ├── 03-pagination.png
+    ├── 04-search-without-js.png
+    └── 05-filter-pagination-page-2.png
 ```
 
 ---
 
 ## Belum Dikerjakan (Cakupan Milestone Selanjutnya)
-- Fitur Pencarian Dinamis (Pertemuan 13)
-- Filter Status (Pertemuan 13)
-- Paginasi (Pertemuan 13)
+Seluruh fitur yang direncanakan hingga Pertemuan 13 telah selesai diimplementasikan. Cakupan milestone selanjutnya belum ditentukan.
