@@ -46,12 +46,14 @@
                     <span class="badge bg-light text-dark border px-3 py-2 fw-medium rounded-pill">
                         {{ $courses->total() }} Kursus Terdaftar
                     </span>
-                    <a href="{{ route('courses.create') }}" class="btn-red">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        Tambah Kursus
-                    </a>
+                    @if (auth()->user()?->isAdmin())
+                        <a href="{{ route('courses.create') }}" class="btn-red">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Tambah Kursus
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -149,16 +151,18 @@
                                         <a href="{{ route('courses.show', $course) }}" class="btn btn-sm btn-outline-secondary" title="Lihat Detail">
                                             Detail
                                         </a>
-                                        <a href="{{ route('courses.edit', $course) }}" class="btn btn-sm btn-outline-warning text-dark" title="Edit Kursus">
-                                            Edit
-                                        </a>
-                                        <form action="{{ route('courses.destroy', $course) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kursus {{ $course->name }} ({{ $course->code }})?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Kursus">
-                                                Hapus
-                                            </button>
-                                        </form>
+                                        @if (auth()->user()?->isAdmin())
+                                            <a href="{{ route('courses.edit', $course) }}" class="btn btn-sm btn-outline-warning text-dark" title="Edit Kursus">
+                                                Edit
+                                            </a>
+                                            <form action="{{ route('courses.destroy', $course) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kursus {{ $course->name }} ({{ $course->code }})?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Kursus">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

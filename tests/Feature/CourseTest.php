@@ -3,12 +3,23 @@
 namespace Tests\Feature;
 
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class CourseTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function actingAsAdmin(): self
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
+        return $this->actingAs($admin);
+    }
 
     /**
      * Test 1: GET /courses berhasil menampilkan daftar kursus.
@@ -39,7 +50,7 @@ class CourseTest extends TestCase
      */
     public function test_create_page_is_accessible(): void
     {
-        $response = $this->get('/courses/create');
+        $response = $this->actingAsAdmin()->get('/courses/create');
 
         $response->assertStatus(200);
         $response->assertSee('Tambah Kursus Baru');
@@ -64,7 +75,7 @@ class CourseTest extends TestCase
             'status' => 'open',
         ];
 
-        $response = $this->post('/courses', $payload);
+        $response = $this->actingAsAdmin()->post('/courses', $payload);
 
         $response->assertRedirect('/courses');
         $response->assertSessionHas('success', 'Kursus berhasil ditambahkan.');
@@ -83,7 +94,7 @@ class CourseTest extends TestCase
      */
     public function test_validation_rejects_empty_code(): void
     {
-        $response = $this->post('/courses', [
+        $response = $this->actingAsAdmin()->post('/courses', [
             'code' => '',
             'name' => 'Kursus Tanpa Kode',
             'fee' => 100000,
@@ -100,7 +111,7 @@ class CourseTest extends TestCase
      */
     public function test_validation_rejects_code_longer_than_20_chars(): void
     {
-        $response = $this->post('/courses', [
+        $response = $this->actingAsAdmin()->post('/courses', [
             'code' => 'KODE-SANGAT-PANJANG-LEBIH-20-KARAKTER',
             'name' => 'Kursus Kode Panjang',
             'fee' => 100000,
@@ -117,7 +128,7 @@ class CourseTest extends TestCase
      */
     public function test_validation_rejects_name_longer_than_120_chars(): void
     {
-        $response = $this->post('/courses', [
+        $response = $this->actingAsAdmin()->post('/courses', [
             'code' => 'NAME-ERR',
             'name' => str_repeat('A', 121),
             'fee' => 100000,
@@ -135,7 +146,7 @@ class CourseTest extends TestCase
     public function test_validation_rejects_invalid_quota(): void
     {
         // Quota = 0
-        $responseZero = $this->post('/courses', [
+        $responseZero = $this->actingAsAdmin()->post('/courses', [
             'code' => 'QUOTA-0',
             'name' => 'Kursus Kuota Nol',
             'fee' => 100000,
@@ -146,7 +157,7 @@ class CourseTest extends TestCase
         $responseZero->assertSessionHasErrors('quota');
 
         // Quota = 501
-        $responseOver = $this->post('/courses', [
+        $responseOver = $this->actingAsAdmin()->post('/courses', [
             'code' => 'QUOTA-501',
             'name' => 'Kursus Kuota Berlebih',
             'fee' => 100000,
@@ -162,7 +173,7 @@ class CourseTest extends TestCase
      */
     public function test_validation_rejects_invalid_status(): void
     {
-        $response = $this->post('/courses', [
+        $response = $this->actingAsAdmin()->post('/courses', [
             'code' => 'STATUS-ERR',
             'name' => 'Kursus Status Tidak Valid',
             'fee' => 100000,
@@ -223,7 +234,7 @@ class CourseTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $response = $this->post('/courses', [
+        $response = $this->actingAsAdmin()->post('/courses', [
             'code' => 'DUP-01',
             'name' => 'Kursus Duplikat',
             'fee' => 120000,
@@ -241,7 +252,7 @@ class CourseTest extends TestCase
     public function test_quota_boundary_500_valid_and_501_invalid(): void
     {
         // 500 Valid
-        $response500 = $this->post('/courses', [
+        $response500 = $this->actingAsAdmin()->post('/courses', [
             'code' => 'MAX-500',
             'name' => 'Kursus Kuota Maksimal',
             'fee' => 200000,
@@ -253,7 +264,7 @@ class CourseTest extends TestCase
         $this->assertDatabaseHas('courses', ['code' => 'MAX-500', 'quota' => 500]);
 
         // 501 Invalid
-        $response501 = $this->post('/courses', [
+        $response501 = $this->actingAsAdmin()->post('/courses', [
             'code' => 'MAX-501',
             'name' => 'Kursus Melebihi Maksimal',
             'fee' => 200000,
@@ -269,7 +280,7 @@ class CourseTest extends TestCase
      */
     public function test_validation_rejects_invalid_start_date(): void
     {
-        $response = $this->post('/courses', [
+        $response = $this->actingAsAdmin()->post('/courses', [
             'code' => 'DATE-ERR',
             'name' => 'Kursus Tanggal Rusak',
             'fee' => 100000,
@@ -296,7 +307,7 @@ class CourseTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $response = $this->get('/courses/' . $course->id . '/edit');
+        $response = $this->actingAsAdmin()->get('/courses/' . $course->id . '/edit');
 
         $response->assertStatus(200);
         $response->assertSee('Edit Kursus');
@@ -320,7 +331,7 @@ class CourseTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $response = $this->put('/courses/' . $course->id, [
+        $response = $this->actingAsAdmin()->put('/courses/' . $course->id, [
             'code' => 'KEEP-01', // code tetap sama
             'name' => 'Nama Baru Diperbarui',
             'description' => 'Deskripsi Baru Diperbarui',
@@ -367,7 +378,7 @@ class CourseTest extends TestCase
         ]);
 
         // Coba ubah Course B agar memakai code 'COURSE-A'
-        $response = $this->put('/courses/' . $courseB->id, [
+        $response = $this->actingAsAdmin()->put('/courses/' . $courseB->id, [
             'code' => 'COURSE-A',
             'name' => 'Kursus B Menggunakan Kode A',
             'fee' => 150000,
@@ -401,7 +412,7 @@ class CourseTest extends TestCase
 
         $this->assertDatabaseHas('courses', ['id' => $course->id, 'code' => 'DEL-01']);
 
-        $response = $this->delete('/courses/' . $course->id);
+        $response = $this->actingAsAdmin()->delete('/courses/' . $course->id);
 
         $response->assertRedirect('/courses');
         $response->assertSessionHas('success', 'Kursus berhasil dihapus.');

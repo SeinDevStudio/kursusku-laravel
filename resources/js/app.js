@@ -69,3 +69,70 @@ $(document).ready(function () {
         $('.reveal-on-scroll').addClass('revealed');
     }
 });
+
+
+// Auth & Dashboard micro-interactions
+$(document).ready(function () {
+    // Password show/hide toggle
+    $(document).on('click', '.js-toggle-password', function () {
+        const targetId = $(this).data('target');
+        const input = document.getElementById(targetId);
+        if (!input) return;
+
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        $(this).find('.icon-eye').toggleClass('d-none', isPassword);
+        $(this).find('.icon-eye-off').toggleClass('d-none', !isPassword);
+    });
+
+    // Loading state on auth form submission
+    $(document).on('submit', '.js-loading-form', function () {
+        const btn = $(this).find('.js-submit-btn');
+        btn.prop('disabled', true);
+        btn.find('.btn-label').addClass('d-none');
+        btn.find('.btn-spinner').removeClass('d-none').addClass('d-inline-flex');
+    });
+
+    // Profile photo preview before upload
+    $(document).on('change', '.js-avatar-input', function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            $('.js-avatar-preview').attr('src', ev.target.result).removeClass('d-none');
+            $('.js-avatar-fallback').addClass('d-none');
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Admin mobile sidebar drawer
+    $(document).on('click', '.js-admin-sidebar-open', function () {
+        $('#adminSidebar, .admin-backdrop').addClass('is-open');
+    });
+    $(document).on('click', '.js-admin-sidebar-close', function () {
+        $('#adminSidebar, .admin-backdrop').removeClass('is-open');
+    });
+
+    // Lightweight counter animation for Admin dashboard stats
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+        $('.js-counter').each(function () {
+            const el = $(this);
+            const target = parseInt(el.data('target'), 10);
+            if (isNaN(target) || target <= 0) return;
+
+            let current = 0;
+            const step = Math.max(1, Math.ceil(target / 15));
+            const timer = setInterval(function () {
+                current += step;
+                if (current >= target) {
+                    el.text(target);
+                    clearInterval(timer);
+                } else {
+                    el.text(current);
+                }
+            }, 25);
+        });
+    }
+});

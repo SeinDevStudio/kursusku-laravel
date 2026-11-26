@@ -350,5 +350,37 @@ evidence/
 
 ---
 
-## Belum Dikerjakan (Cakupan Milestone Selanjutnya)
-Seluruh fitur yang direncanakan hingga Pertemuan 13 telah selesai diimplementasikan. Cakupan milestone selanjutnya belum ditentukan.
+## Sistem Autentikasi, Dashboard Personal & Manajemen Pengguna
+
+### Struktur Autentikasi & Otorisasi
+- **Guard & Session**: Laravel native session guard (`web`) dengan penyimpanan sesi di database (`sessions`), regenerasi sesi saat login, invalidasi sesi + regenerasi token CSRF saat logout, serta proteksi *rate limiting* (maksimal 5 percobaan gagal per menit).
+- **Role & Middleware**:
+  - `active` (`App\Http\Middleware\EnsureUserIsActive`): Memastikan akun berstatus aktif (`is_active = true`).
+  - `role:admin` (`App\Http\Middleware\EnsureUserHasRole`): Membatasi akses halaman administrasi (`/admin/*`) dan operasi tulis manajemen kursus (`create`, `store`, `edit`, `update`, `destroy`) hanya untuk `ADMIN`.
+  - Halaman publik (`/`, `/courses`, `/courses/{course}`, `/courses/{course}/availability`, `/enrollments/create`, `/pendaftaran`) tetap dapat diakses tanpa login.
+- **Dashboard & Profil**:
+  - `/dashboard`: Dashboard personal dengan ringkasan akun, tanggal bergabung, login terakhir, dan pintasan pengaturan.
+  - `/profile` & `/profile/password`: Edit nama, username, email, telepon, unggah foto profil (disk `public` via `php artisan storage:link`), dan ubah kata sandi dengan verifikasi kata sandi lama.
+- **Admin Panel (`/admin`, `/admin/users`)**:
+  - Statistik pengguna aktual dari database, pencarian, filter role/status, pagination, tambah/edit pengguna, ubah role, dan aktivasi/nonaktivasi akun.
+
+### Konfigurasi Email Reset Password
+- Fitur *Forgot Password* (`/forgot-password`) dan *Reset Password* (`/reset-password/{token}`) menggunakan **Laravel Password Broker** (`password_reset_tokens`).
+- Konfigurasi default lokal menggunakan `MAIL_MAILER=log`. Saat pengujian lokal, tautan reset password asli dapat dilihat pada file `storage/logs/laravel.log`. Untuk pengiriman email nyata, ubah `MAIL_MAILER=smtp` beserta kredensial SMTP lokal (seperti Mailpit/Mailtrap) pada `.env`.
+
+### Akun Demo & Menjalankan Seeder
+Seeder `Database\Seeders\UserSeeder` bersifat idempoten (aman dijalankan ulang tanpa menduplikasi akun atau menimpa kata sandi akun yang sudah ada) dan menghasilkan password acak yang kuat saat pembuatan awal:
+- **1 ADMIN**: `admin@kursusku.test` (username: `admin`)
+- **3 USER**: `alya@kursusku.test` (`alya`), `bima@kursusku.test` (`bima`), `citra@kursusku.test` (`citra`)
+
+Perintah menjalankan seeder dan storage link:
+```powershell
+php artisan db:seed --class=UserSeeder
+php artisan storage:link
+```
+*(Kredensial awal dicetak pada output terminal saat akun baru dibuat oleh seeder).*
+
+### Menjalankan Automated Tests
+```powershell
+php vendor/bin/phpunit
+```
